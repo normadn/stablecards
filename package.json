@@ -1,0 +1,17 @@
+{
+  "name": "stablecards",
+  "version": "1.0.0",
+  "description": "Stablecoin credit card issuer comparison API and UI",
+  "private": true,
+  "scripts": {
+    "install:all": "cd api && npm install && cd ../ui && npm install && cd ../scripts && npm install",
+    "dev:api": "cd api && npm run dev",
+    "dev:ui": "cd ui && npm run dev",
+    "build:api": "cd api && npm run build",
+    "build:ui": "cd ui && npm run build",
+    "validate": "cd scripts && npm run validate"
+  },
+  "keywords": ["stablecoin", "credit-card", "issuer", "comparison"],
+  "author": "",
+  "license": "MIT"
+}

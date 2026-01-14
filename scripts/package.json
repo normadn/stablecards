@@ -1,0 +1,13 @@
+{
+  "name": "stablecards-scripts",
+  "version": "1.0.0",
+  "description": "Validation and utility scripts",
+  "main": "validate-issuers.ts",
+  "scripts": {
+    "validate": "ts-node validate-issuers.ts"
+  },
+  "dependencies": {
+    "typescript": "^5.3.3",
+    "ts-node": "^10.9.2"
+  }
+}

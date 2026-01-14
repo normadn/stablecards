@@ -1,0 +1,254 @@
+[
+  {
+    "id": "rain",
+    "name": "Rain",
+    "website": "https://rain.co",
+    "roles": ["orchestration", "program_manager"],
+    "networks": ["visa", "mastercard"],
+    "card_types": ["debit", "prepaid"],
+    "regions_supported": [
+      {"code": "US", "notes": "Full support"},
+      {"code": "GB", "notes": "Full support"},
+      {"code": "DE", "notes": "Full support"},
+      {"code": "FR", "notes": "Full support"}
+    ],
+    "customer_type": ["b2b", "b2c"],
+    "custody_model": "custodial",
+    "funding_sources": ["stablecoin", "fiat_ach", "wire"],
+    "stablecoins": ["USDC", "USDT"],
+    "chains": ["Ethereum", "Base", "Solana"],
+    "kyc_kyb": "required",
+    "pricing_model": ["transaction_fee", "monthly_fee"],
+    "api_maturity": 4,
+    "docs_quality": 4,
+    "confidence": "high",
+    "notes": "Full-stack stablecoin card platform with strong API",
+    "sources": [
+      "https://rain.co/docs",
+      "https://rain.co/pricing"
+    ]
+  },
+  {
+    "id": "bridge",
+    "name": "Bridge",
+    "website": "https://bridge.cards",
+    "roles": ["orchestration", "program_manager"],
+    "networks": ["visa"],
+    "card_types": ["debit"],
+    "regions_supported": [
+      {"code": "US", "notes": "Full support"},
+      {"code": "GB", "notes": "Full support"}
+    ],
+    "customer_type": ["b2b"],
+    "custody_model": "non_custodial",
+    "funding_sources": ["stablecoin"],
+    "stablecoins": ["USDC"],
+    "chains": ["Ethereum", "Base"],
+    "kyc_kyb": "required",
+    "pricing_model": ["transaction_fee"],
+    "api_maturity": 3,
+    "docs_quality": 3,
+    "confidence": "medium",
+    "notes": "Non-custodial focus, B2B oriented",
+    "sources": [
+      "https://bridge.cards"
+    ]
+  },
+  {
+    "id": "stripe-issuing",
+    "name": "Stripe Issuing",
+    "website": "https://stripe.com/issuing",
+    "roles": ["processor", "bin_sponsor"],
+    "networks": ["visa", "mastercard"],
+    "card_types": ["debit", "prepaid", "credit"],
+    "regions_supported": [
+      {"code": "US", "notes": "Full support"},
+      {"code": "GB", "notes": "Full support"},
+      {"code": "IE", "notes": "Full support"},
+      {"code": "FR", "notes": "Full support"},
+      {"code": "DE", "notes": "Full support"},
+      {"code": "AU", "notes": "Full support"}
+    ],
+    "customer_type": ["b2b", "b2c"],
+    "custody_model": "custodial",
+    "funding_sources": ["fiat_ach", "wire"],
+    "stablecoins": [],
+    "chains": [],
+    "kyc_kyb": "required",
+    "pricing_model": ["transaction_fee", "card_issuance_fee"],
+    "api_maturity": 5,
+    "docs_quality": 5,
+    "confidence": "high",
+    "notes": "Card issuing + stablecoin funding via your stack. Not stablecoin-native but widely used. Requires separate stablecoin integration.",
+    "sources": [
+      "https://stripe.com/docs/issuing",
+      "https://stripe.com/pricing"
+    ]
+  },
+  {
+    "id": "baanx",
+    "name": "Baanx",
+    "website": "https://baanx.com",
+    "roles": ["program_manager", "bin_sponsor"],
+    "networks": ["visa", "mastercard"],
+    "card_types": ["debit", "prepaid"],
+    "regions_supported": [
+      {"code": "GB", "notes": "Full support"},
+      {"code": "EE", "notes": "Full support"},
+      {"code": "US", "notes": "Limited support"}
+    ],
+    "customer_type": ["b2b"],
+    "custody_model": "hybrid",
+    "funding_sources": ["stablecoin", "fiat_ach"],
+    "stablecoins": ["USDC", "USDT"],
+    "chains": ["Ethereum", "Polygon"],
+    "kyc_kyb": "required",
+    "pricing_model": ["transaction_fee", "setup_fee"],
+    "api_maturity": 3,
+    "docs_quality": 3,
+    "confidence": "medium",
+    "notes": "Issuer/program manager partner model. B2B focused.",
+    "sources": [
+      "https://baanx.com",
+      "https://baanx.com/api-docs"
+    ]
+  },
+  {
+    "id": "marqeta",
+    "name": "Marqeta",
+    "website": "https://www.marqeta.com",
+    "roles": ["processor", "bin_sponsor"],
+    "networks": ["visa", "mastercard"],
+    "card_types": ["debit", "prepaid", "credit"],
+    "regions_supported": [
+      {"code": "US", "notes": "Full support"},
+      {"code": "GB", "notes": "Full support"},
+      {"code": "CA", "notes": "Full support"},
+      {"code": "AU", "notes": "Full support"}
+    ],
+    "customer_type": ["b2b", "b2c"],
+    "custody_model": "custodial",
+    "funding_sources": ["fiat_ach", "wire"],
+    "stablecoins": [],
+    "chains": [],
+    "kyc_kyb": "required",
+    "pricing_model": ["transaction_fee", "monthly_fee"],
+    "api_maturity": 5,
+    "docs_quality": 5,
+    "confidence": "high",
+    "notes": "Baseline issuer processor; not stablecoin-native but widely used. Requires separate stablecoin integration layer.",
+    "sources": [
+      "https://www.marqeta.com/docs",
+      "https://www.marqeta.com/pricing"
+    ]
+  },
+  {
+    "id": "galileo",
+    "name": "Galileo",
+    "website": "https://www.galileo-ft.com",
+    "roles": ["processor"],
+    "networks": ["visa", "mastercard"],
+    "card_types": ["debit", "prepaid", "credit"],
+    "regions_supported": [
+      {"code": "US", "notes": "Full support"},
+      {"code": "CA", "notes": "Full support"}
+    ],
+    "customer_type": ["b2b", "b2c"],
+    "custody_model": "custodial",
+    "funding_sources": ["fiat_ach", "wire"],
+    "stablecoins": [],
+    "chains": [],
+    "kyc_kyb": "required",
+    "pricing_model": ["transaction_fee", "monthly_fee"],
+    "api_maturity": 4,
+    "docs_quality": 4,
+    "confidence": "high",
+    "notes": "Issuer processor; not stablecoin-native but used. Requires separate stablecoin integration.",
+    "sources": [
+      "https://www.galileo-ft.com/docs",
+      "https://www.galileo-ft.com/pricing"
+    ]
+  },
+  {
+    "id": "i2c",
+    "name": "i2c",
+    "website": "https://www.i2cinc.com",
+    "roles": ["processor"],
+    "networks": ["visa", "mastercard"],
+    "card_types": ["debit", "prepaid", "credit"],
+    "regions_supported": [
+      {"code": "US", "notes": "Full support"},
+      {"code": "GB", "notes": "Full support"},
+      {"code": "CA", "notes": "Full support"},
+      {"code": "AU", "notes": "Full support"}
+    ],
+    "customer_type": ["b2b", "b2c"],
+    "custody_model": "custodial",
+    "funding_sources": ["fiat_ach", "wire"],
+    "stablecoins": [],
+    "chains": [],
+    "kyc_kyb": "required",
+    "pricing_model": ["transaction_fee", "setup_fee"],
+    "api_maturity": 4,
+    "docs_quality": 4,
+    "confidence": "high",
+    "notes": "Issuer processor; not stablecoin-native but used. Requires separate stablecoin integration.",
+    "sources": [
+      "https://www.i2cinc.com/docs",
+      "https://www.i2cinc.com/pricing"
+    ]
+  },
+  {
+    "id": "circle-card",
+    "name": "Circle Card",
+    "website": "https://www.circle.com",
+    "roles": ["orchestration", "program_manager"],
+    "networks": ["visa"],
+    "card_types": ["debit"],
+    "regions_supported": [
+      {"code": "US", "notes": "Full support"}
+    ],
+    "customer_type": ["b2c"],
+    "custody_model": "custodial",
+    "funding_sources": ["stablecoin"],
+    "stablecoins": ["USDC"],
+    "chains": ["Ethereum", "Solana"],
+    "kyc_kyb": "required",
+    "pricing_model": ["transaction_fee"],
+    "api_maturity": 3,
+    "docs_quality": 3,
+    "confidence": "medium",
+    "notes": "USDC-native card solution. Primarily B2C focused.",
+    "sources": [
+      "https://www.circle.com/card"
+    ]
+  },
+  {
+    "id": "crypto-com",
+    "name": "Crypto.com",
+    "website": "https://crypto.com",
+    "roles": ["orchestration", "program_manager"],
+    "networks": ["visa"],
+    "card_types": ["debit", "prepaid"],
+    "regions_supported": [
+      {"code": "US", "notes": "Full support"},
+      {"code": "GB", "notes": "Full support"},
+      {"code": "SG", "notes": "Full support"},
+      {"code": "AU", "notes": "Full support"}
+    ],
+    "customer_type": ["b2c"],
+    "custody_model": "custodial",
+    "funding_sources": ["stablecoin", "crypto"],
+    "stablecoins": ["USDC", "USDT"],
+    "chains": ["Ethereum", "Cronos"],
+    "kyc_kyb": "required",
+    "pricing_model": ["transaction_fee", "monthly_fee"],
+    "api_maturity": 3,
+    "docs_quality": 3,
+    "confidence": "medium",
+    "notes": "Consumer-focused card. B2C only.",
+    "sources": [
+      "https://crypto.com/cards"
+    ]
+  }
+]
