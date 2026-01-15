@@ -86,6 +86,33 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('')
   const [activeNav, setActiveNav] = useState('discover')
   const [showRegionDropdown, setShowRegionDropdown] = useState(false)
+  const [comparisonCards, setComparisonCards] = useState<ComparisonResult[]>([])
+
+  const MAX_COMPARISON_CARDS = 4
+
+  const isInComparison = (issuerId: string) => 
+    comparisonCards.some(c => c.issuer.id === issuerId)
+
+  const toggleComparison = (result: ComparisonResult) => {
+    if (isInComparison(result.issuer.id)) {
+      setComparisonCards(prev => prev.filter(c => c.issuer.id !== result.issuer.id))
+    } else if (comparisonCards.length < MAX_COMPARISON_CARDS) {
+      setComparisonCards(prev => [...prev, result])
+    }
+  }
+
+  const removeFromComparison = (issuerId: string) => {
+    setComparisonCards(prev => prev.filter(c => c.issuer.id !== issuerId))
+  }
+
+  const getAnnualFee = (pricingModel: string[]) => {
+    if (pricingModel.some(p => p.toLowerCase().includes('free'))) return 'Free'
+    if (pricingModel.some(p => p.toLowerCase().includes('annual'))) {
+      const match = pricingModel.find(p => p.toLowerCase().includes('annual'))
+      return match || 'Has Fee'
+    }
+    return pricingModel.join(', ') || 'Unknown'
+  }
 
   const [formData, setFormData] = useState({
     country: '',
@@ -365,6 +392,7 @@ export default function Home() {
       <main style={{
         flex: 1,
         padding: '2rem 3rem',
+        paddingBottom: comparisonCards.length > 0 && activeNav !== 'comparison' ? '100px' : '2rem',
         overflowY: 'auto',
       }}>
         {/* Title */}
@@ -374,10 +402,11 @@ export default function Home() {
           color: '#ffffff',
           marginBottom: '2rem',
         }}>
-          Explore Cards
+          {activeNav === 'comparison' ? 'Compare Cards' : 'Explore Cards'}
         </h1>
 
         {/* Search Bar */}
+        {activeNav !== 'comparison' && (
         <div style={{
           position: 'relative',
           marginBottom: '1.5rem',
@@ -421,8 +450,10 @@ export default function Home() {
             }}
           />
         </div>
+        )}
 
         {/* Filters */}
+        {activeNav !== 'comparison' && (
         <div style={{
           display: 'flex',
           gap: '0.75rem',
@@ -633,6 +664,7 @@ export default function Home() {
             </svg>
           </button>
         </div>
+        )}
 
         {/* Hidden Filter Form */}
         <form onSubmit={handleSubmit} style={{ display: 'none' }}>
@@ -679,7 +711,7 @@ export default function Home() {
         )}
 
         {/* Cards Grid */}
-        {loading ? (
+        {activeNav !== 'comparison' && (loading ? (
           <div style={{ textAlign: 'center', padding: '4rem', color: '#9ca3af' }}>
             Loading...
           </div>
@@ -749,30 +781,35 @@ export default function Home() {
                     <button
                       onClick={(e) => {
                         e.stopPropagation()
-                        // Add to comparison logic
+                        toggleComparison(result)
                       }}
                       style={{
                         width: '32px',
                         height: '32px',
                         borderRadius: '50%',
-                        background: 'rgba(255, 255, 255, 0.2)',
+                        background: isInComparison(result.issuer.id) ? '#10b981' : 'rgba(255, 255, 255, 0.2)',
                         border: 'none',
-                        color: textColor,
-                        cursor: 'pointer',
+                        color: isInComparison(result.issuer.id) ? '#ffffff' : textColor,
+                        cursor: comparisonCards.length >= MAX_COMPARISON_CARDS && !isInComparison(result.issuer.id) ? 'not-allowed' : 'pointer',
                         display: 'flex',
                         alignItems: 'center',
                         justifyContent: 'center',
                         fontSize: '1.25rem',
                         transition: 'all 0.2s ease',
+                        opacity: comparisonCards.length >= MAX_COMPARISON_CARDS && !isInComparison(result.issuer.id) ? 0.5 : 1,
                       }}
                       onMouseEnter={(e) => {
-                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'
+                        if (!isInComparison(result.issuer.id)) {
+                          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'
+                        }
                       }}
                       onMouseLeave={(e) => {
-                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'
+                        if (!isInComparison(result.issuer.id)) {
+                          e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'
+                        }
                       }}
                     >
-                      +
+                      {isInComparison(result.issuer.id) ? '✓' : '+'}
                     </button>
                   </div>
 
@@ -891,8 +928,241 @@ export default function Home() {
             <p style={{ fontSize: '1.125rem', marginBottom: '0.5rem' }}>No cards found</p>
             <p style={{ fontSize: '0.9rem', opacity: 0.7 }}>Select a country to start exploring cards</p>
           </div>
-        ) : null}
+        ) : null)}
+
+        {/* Comparison View */}
+        {activeNav === 'comparison' && (
+          <div style={{ marginTop: '2rem' }}>
+            {comparisonCards.length === 0 ? (
+              <div style={{
+                textAlign: 'center',
+                padding: '4rem',
+                color: '#9ca3af',
+              }}>
+                <p style={{ fontSize: '1.125rem', marginBottom: '0.5rem' }}>No cards selected for comparison</p>
+                <p style={{ fontSize: '0.9rem', opacity: 0.7 }}>Click the + button on cards to add them to comparison</p>
+              </div>
+            ) : (
+              <div style={{
+                overflowX: 'auto',
+                borderRadius: '1rem',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+              }}>
+                <table style={{
+                  width: '100%',
+                  minWidth: `${comparisonCards.length * 200 + 200}px`,
+                  borderCollapse: 'collapse',
+                }}>
+                  <thead>
+                    <tr>
+                      <th style={{
+                        padding: '1rem',
+                        background: '#0a0f24',
+                        borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                        textAlign: 'left',
+                        color: '#9ca3af',
+                        fontWeight: '500',
+                        fontSize: '0.875rem',
+                        position: 'sticky',
+                        left: 0,
+                        zIndex: 10,
+                        minWidth: '180px',
+                      }}>
+                        Feature
+                      </th>
+                      {comparisonCards.map(card => (
+                        <th key={card.issuer.id} style={{
+                          padding: '1rem',
+                          background: '#131a33',
+                          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+                          textAlign: 'center',
+                          minWidth: '180px',
+                        }}>
+                          <div style={{
+                            display: 'flex',
+                            flexDirection: 'column',
+                            alignItems: 'center',
+                            gap: '0.5rem',
+                          }}>
+                            <div style={{
+                              width: '60px',
+                              height: '38px',
+                              background: getCardColor(card.issuer.name),
+                              borderRadius: '4px',
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center',
+                              fontSize: '0.5rem',
+                              fontWeight: '600',
+                              color: getTextColor(card.issuer.name),
+                            }}>
+                              {card.issuer.name.substring(0, 8)}
+                            </div>
+                            <span style={{ color: '#ffffff', fontWeight: '600', fontSize: '0.9rem' }}>
+                              {card.issuer.name}
+                            </span>
+                            <button
+                              onClick={() => removeFromComparison(card.issuer.id)}
+                              style={{
+                                background: 'rgba(239, 68, 68, 0.2)',
+                                border: 'none',
+                                borderRadius: '4px',
+                                color: '#fca5a5',
+                                cursor: 'pointer',
+                                padding: '0.25rem 0.5rem',
+                                fontSize: '0.75rem',
+                              }}
+                            >
+                              Remove
+                            </button>
+                          </div>
+                        </th>
+                      ))}
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {[
+                      { label: 'Match Score', getValue: (c: ComparisonResult) => `${c.score}%` },
+                      { label: 'Annual Fee', getValue: (c: ComparisonResult) => getAnnualFee(c.issuer.pricing_model) },
+                      { label: 'KYC Status', getValue: (c: ComparisonResult) => c.issuer.kyc_kyb },
+                      { label: 'Custody Model', getValue: (c: ComparisonResult) => c.issuer.custody_model },
+                      { label: 'Networks', getValue: (c: ComparisonResult) => c.issuer.networks.join(', ') },
+                      { label: 'Stablecoins', getValue: (c: ComparisonResult) => c.issuer.stablecoins.join(', ') || 'N/A' },
+                      { label: 'Chains', getValue: (c: ComparisonResult) => c.issuer.chains.join(', ') || 'N/A' },
+                      { label: 'API Maturity', getValue: (c: ComparisonResult) => {
+                        const stars = '★'.repeat(c.issuer.api_maturity) + '☆'.repeat(5 - c.issuer.api_maturity)
+                        return `${stars} (${c.issuer.api_maturity}/5)`
+                      }},
+                      { label: 'Customer Type', getValue: (c: ComparisonResult) => c.issuer.customer_type.join(', ') },
+                      { label: 'Card Types', getValue: (c: ComparisonResult) => c.issuer.card_types.join(', ') },
+                      { label: 'Funding Sources', getValue: (c: ComparisonResult) => c.issuer.funding_sources.join(', ') },
+                    ].map((row, idx) => (
+                      <tr key={row.label}>
+                        <td style={{
+                          padding: '1rem',
+                          background: idx % 2 === 0 ? '#0a0f24' : '#0d1229',
+                          borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                          color: '#9ca3af',
+                          fontWeight: '500',
+                          fontSize: '0.875rem',
+                          position: 'sticky',
+                          left: 0,
+                          zIndex: 5,
+                        }}>
+                          {row.label}
+                        </td>
+                        {comparisonCards.map(card => (
+                          <td key={card.issuer.id} style={{
+                            padding: '1rem',
+                            background: idx % 2 === 0 ? '#131a33' : '#161d38',
+                            borderBottom: '1px solid rgba(255, 255, 255, 0.05)',
+                            color: '#ffffff',
+                            textAlign: 'center',
+                            fontSize: '0.875rem',
+                          }}>
+                            {row.getValue(card)}
+                          </td>
+                        ))}
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            )}
+          </div>
+        )}
       </main>
+
+      {/* Comparison Bar */}
+      {comparisonCards.length > 0 && activeNav !== 'comparison' && (
+        <div style={{
+          position: 'fixed',
+          bottom: 0,
+          left: '280px',
+          right: 0,
+          background: '#131a33',
+          borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+          padding: '1rem 2rem',
+          display: 'flex',
+          alignItems: 'center',
+          gap: '1rem',
+          zIndex: 100,
+          boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.3)',
+        }}>
+          <div style={{
+            display: 'flex',
+            gap: '0.75rem',
+            flex: 1,
+            overflowX: 'auto',
+          }}>
+            {comparisonCards.map(card => (
+              <div key={card.issuer.id} style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                background: '#1a1f3a',
+                borderRadius: '0.5rem',
+                padding: '0.5rem 0.75rem',
+              }}>
+                <div style={{
+                  width: '40px',
+                  height: '25px',
+                  background: getCardColor(card.issuer.name),
+                  borderRadius: '3px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  fontSize: '0.4rem',
+                  fontWeight: '600',
+                  color: getTextColor(card.issuer.name),
+                }}>
+                  {card.issuer.name.substring(0, 6)}
+                </div>
+                <span style={{ color: '#ffffff', fontSize: '0.875rem', fontWeight: '500' }}>
+                  {card.issuer.name}
+                </span>
+                <button
+                  onClick={() => removeFromComparison(card.issuer.id)}
+                  style={{
+                    background: 'transparent',
+                    border: 'none',
+                    color: '#9ca3af',
+                    cursor: 'pointer',
+                    padding: '0.25rem',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    fontSize: '1rem',
+                  }}
+                  onMouseEnter={(e) => { e.currentTarget.style.color = '#ef4444' }}
+                  onMouseLeave={(e) => { e.currentTarget.style.color = '#9ca3af' }}
+                >
+                  ×
+                </button>
+              </div>
+            ))}
+          </div>
+          <button
+            onClick={() => setActiveNav('comparison')}
+            style={{
+              background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+              border: 'none',
+              borderRadius: '0.75rem',
+              color: '#ffffff',
+              cursor: 'pointer',
+              padding: '0.75rem 1.5rem',
+              fontSize: '0.9rem',
+              fontWeight: '600',
+              whiteSpace: 'nowrap',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => { e.currentTarget.style.transform = 'scale(1.02)' }}
+            onMouseLeave={(e) => { e.currentTarget.style.transform = 'scale(1)' }}
+          >
+            Compare {comparisonCards.length} Card{comparisonCards.length > 1 ? 's' : ''}
+          </button>
+        </div>
+      )}
     </div>
   )
 }
