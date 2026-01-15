@@ -93,6 +93,7 @@ export default function Home() {
   const [searchQuery, setSearchQuery] = useState('')
   const [activeNav, setActiveNav] = useState('discover')
   const [showRegionDropdown, setShowRegionDropdown] = useState(false)
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
   const [comparisonCards, setComparisonCards] = useState<ComparisonResult[]>([])
 
   const MAX_COMPARISON_CARDS = 4
@@ -232,21 +233,99 @@ export default function Home() {
   return (
     <div 
       style={{ display: 'flex', minHeight: '100vh', width: '100%' }}
-      onClick={() => setShowRegionDropdown(false)}
+      onClick={() => {
+        setShowRegionDropdown(false)
+        if (mobileMenuOpen) setMobileMenuOpen(false)
+      }}
     >
-      {/* Left Sidebar */}
-      <aside style={{
-        width: '280px',
-        minHeight: '100vh',
-        background: '#0a0f24',
-        borderRight: '1px solid rgba(255, 255, 255, 0.1)',
-        padding: '2rem 1.5rem',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '2rem',
-      }}>
-        {/* Logo */}
+      {/* Mobile Header */}
+      <div 
+        className="mobile-header"
+        style={{
+          display: 'none',
+          position: 'fixed',
+          top: 0,
+          left: 0,
+          right: 0,
+          height: '60px',
+          background: '#0a0f24',
+          borderBottom: '1px solid rgba(255, 255, 255, 0.1)',
+          padding: '0 1rem',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          zIndex: 1000,
+        }}
+      >
         <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{
+            width: '28px',
+            height: '28px',
+            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+            borderRadius: '6px',
+          }} />
+          <span style={{ fontSize: '1.125rem', fontWeight: '700', color: '#ffffff' }}>
+            Stablecards
+          </span>
+        </div>
+        <button
+          type="button"
+          onClick={(e) => {
+            e.stopPropagation()
+            setMobileMenuOpen(!mobileMenuOpen)
+          }}
+          style={{
+            background: 'transparent',
+            border: 'none',
+            color: '#ffffff',
+            padding: '0.5rem',
+            cursor: 'pointer',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '4px',
+          }}
+        >
+          <span style={{ width: '20px', height: '2px', background: '#ffffff', borderRadius: '1px' }} />
+          <span style={{ width: '20px', height: '2px', background: '#ffffff', borderRadius: '1px' }} />
+          <span style={{ width: '20px', height: '2px', background: '#ffffff', borderRadius: '1px' }} />
+        </button>
+      </div>
+
+      {/* Mobile Menu Overlay */}
+      {mobileMenuOpen && (
+        <div
+          className="mobile-overlay"
+          style={{
+            position: 'fixed',
+            top: '60px',
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: 'rgba(0, 0, 0, 0.5)',
+            zIndex: 998,
+          }}
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
+      {/* Left Sidebar */}
+      <aside 
+        className={`sidebar ${mobileMenuOpen ? 'open' : ''}`}
+        style={{
+          width: '280px',
+          minHeight: '100vh',
+          background: '#0a0f24',
+          borderRight: '1px solid rgba(255, 255, 255, 0.1)',
+          padding: '2rem 1.5rem',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '2rem',
+          position: 'relative',
+          zIndex: 999,
+          transition: 'transform 0.3s ease',
+        }}
+      >
+        {/* Logo */}
+        <div className="desktop-logo" style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
           <div style={{
             width: '32px',
             height: '32px',
@@ -288,7 +367,7 @@ export default function Home() {
         {/* Navigation */}
         <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
           <button
-            onClick={() => setActiveNav('discover')}
+            onClick={() => { setActiveNav('discover'); setMobileMenuOpen(false) }}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -324,7 +403,7 @@ export default function Home() {
           </button>
 
           <button
-            onClick={() => setActiveNav('comparison')}
+            onClick={() => { setActiveNav('comparison'); setMobileMenuOpen(false) }}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -358,7 +437,7 @@ export default function Home() {
           </button>
 
           <button
-            onClick={() => setActiveNav('find')}
+            onClick={() => { setActiveNav('find'); setMobileMenuOpen(false) }}
             style={{
               display: 'flex',
               alignItems: 'center',
@@ -389,14 +468,17 @@ export default function Home() {
       </aside>
 
       {/* Main Content */}
-      <main style={{
-        flex: 1,
-        padding: '2rem 3rem',
-        paddingBottom: comparisonCards.length > 0 && activeNav !== 'comparison' ? '100px' : '2rem',
-        overflowY: 'auto',
-      }}>
+      <main 
+        className="main-content"
+        style={{
+          flex: 1,
+          padding: '2rem 3rem',
+          paddingBottom: comparisonCards.length > 0 && activeNav !== 'comparison' ? '100px' : '2rem',
+          overflowY: 'auto',
+        }}
+      >
         {/* Title */}
-        <h1 style={{
+        <h1 className="page-title" style={{
           fontSize: '2.5rem',
           fontWeight: '700',
           color: '#ffffff',
@@ -454,13 +536,16 @@ export default function Home() {
 
         {/* Filters */}
         {activeNav !== 'comparison' && (
-        <div style={{
-          display: 'flex',
-          gap: '0.75rem',
-          marginBottom: '2rem',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-        }}>
+        <div 
+          className="filters-row"
+          style={{
+            display: 'flex',
+            gap: '0.75rem',
+            marginBottom: '2rem',
+            flexWrap: 'wrap',
+            alignItems: 'center',
+          }}
+        >
             <div style={{ position: 'relative' }} onClick={(e) => e.stopPropagation()}>
               <button
                 onClick={() => setShowRegionDropdown(!showRegionDropdown)}
@@ -716,11 +801,14 @@ export default function Home() {
             Loading...
           </div>
         ) : filteredResults.length > 0 ? (
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
-            gap: '1.5rem',
-          }}>
+          <div 
+            className="cards-grid"
+            style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+              gap: '1.5rem',
+            }}
+          >
             {filteredResults.map((result) => {
               const cardColor = getCardColor(result.issuer.name)
               const textColor = getTextColor(result.issuer.name)
@@ -1075,26 +1163,32 @@ export default function Home() {
 
       {/* Comparison Bar */}
       {comparisonCards.length > 0 && activeNav !== 'comparison' && (
-        <div style={{
-          position: 'fixed',
-          bottom: 0,
-          left: '280px',
-          right: 0,
-          background: '#131a33',
-          borderTop: '1px solid rgba(255, 255, 255, 0.1)',
-          padding: '1rem 2rem',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '1rem',
-          zIndex: 100,
-          boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.3)',
-        }}>
-          <div style={{
+        <div 
+          className="comparison-tray"
+          style={{
+            position: 'fixed',
+            bottom: 0,
+            left: '280px',
+            right: 0,
+            background: '#131a33',
+            borderTop: '1px solid rgba(255, 255, 255, 0.1)',
+            padding: '1rem 2rem',
             display: 'flex',
-            gap: '0.75rem',
-            flex: 1,
-            overflowX: 'auto',
-          }}>
+            alignItems: 'center',
+            gap: '1rem',
+            zIndex: 100,
+            boxShadow: '0 -4px 20px rgba(0, 0, 0, 0.3)',
+          }}
+        >
+          <div 
+            className="comparison-tray-cards"
+            style={{
+              display: 'flex',
+              gap: '0.75rem',
+              flex: 1,
+              overflowX: 'auto',
+            }}
+          >
             {comparisonCards.map(card => (
               <div key={card.issuer.id} style={{
                 display: 'flex',
