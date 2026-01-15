@@ -138,8 +138,12 @@ export default function Home() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
-    if (!formData.country) {
-      setError('Country is required')
+    await fetchResults()
+  }
+
+  const fetchResults = async (dataToUse = formData) => {
+    if (!dataToUse.country) {
+      setResults([])
       return
     }
 
@@ -147,34 +151,49 @@ export default function Home() {
     setError(null)
 
     const params = new URLSearchParams()
-    Object.entries(formData).forEach(([key, value]) => {
+    Object.entries(dataToUse).forEach(([key, value]) => {
       if (value) params.append(key, value)
     })
 
+    const url = `${API_URL}/compare?${params}`
+    console.log('Fetching from:', url)
+
     try {
-      const res = await fetch(`${API_URL}/compare?${params}`)
+      const res = await fetch(url)
+      console.log('Response status:', res.status)
       if (!res.ok) {
         const data = await res.json()
         throw new Error(data.error || 'Failed to compare')
       }
       const data: CompareResponse = await res.json()
+      console.log('Received results:', data.matches.length, 'matches')
       setResults(data.matches)
     } catch (err: any) {
+      console.error('Fetch error:', err)
       setError(err.message || 'Failed to compare issuers')
+      setResults([])
     } finally {
       setLoading(false)
     }
   }
 
   const handleChange = (field: string, value: string) => {
-    setFormData((prev) => ({ ...prev, [field]: value }))
-    // Auto-submit when filters change
-    if (field === 'country' && value) {
-      setTimeout(() => {
-        const form = document.querySelector('form') as HTMLFormElement
-        if (form) form.requestSubmit()
-      }, 100)
-    }
+    setFormData((prev) => {
+      const updated = { ...prev, [field]: value }
+      // Auto-fetch when country changes
+      if (field === 'country') {
+        if (value) {
+          // Use setTimeout to ensure state is updated
+          setTimeout(() => {
+            fetchResults(updated)
+          }, 0)
+        } else {
+          // Clear results when country is cleared
+          setResults([])
+        }
+      }
+      return updated
+    })
   }
 
   const filteredResults = results.filter(result => 
@@ -235,7 +254,7 @@ export default function Home() {
             fontWeight: '700',
             color: '#ffffff',
           }}>
-            CryptoCards
+            Stablecards
           </span>
         </div>
 
