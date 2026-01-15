@@ -1,0 +1,449 @@
+[
+  {
+    "id": "rain",
+    "name": "Rain",
+    "website": "https://www.rain.xyz/",
+    "roles": ["orchestration", "program_manager"],
+    "networks": ["visa", "mastercard"],
+    "card_types": ["debit", "prepaid", "credit"],
+    "regions_supported": [
+      {"code": "US", "notes": "Full support"},
+      {"code": "GB", "notes": "Full support"},
+      {"code": "DE", "notes": "Full support"},
+      {"code": "FR", "notes": "Full support"}
+    ],
+    "customer_type": ["b2b", "b2c"],
+    "custody_model": "custodial",
+    "funding_sources": ["stablecoin", "fiat_ach", "wire"],
+    "stablecoins": ["USDC", "USDT"],
+    "chains": ["Ethereum", "Base", "Solana"],
+    "kyc_kyb": "required",
+    "pricing_model": ["transaction_fee", "monthly_fee"],
+    "api_maturity": 5,
+    "docs_quality": 5,
+    "confidence": "high",
+    "notes": "Full-stack infrastructure platform for stablecoin-backed cards and payments. Enables businesses to launch branded card programs connecting to users' stablecoin balances for spending at 150M+ merchants across 150+ countries. End-to-end platform includes cards, money-in (on-ramp), accounts (wallets), and money-out (off-ramp). Modular infrastructure, developer-first API, SOC 2 compliant with built-in KYC/AML. Can launch in weeks, not quarters. Partnered with Visa for stablecoin settlement (24/7 USDC settlement). Expanded support to Solana, Tron, and Stellar blockchains. Supports credit cards with tokenized receivables.",
+    "sources": [
+      "https://www.rain.xyz/",
+      "https://www.prnewswire.com/news-releases/rain-and-visa-partner-to-accelerate-onchain-credit-cards-302443827.html",
+      "https://www.prnewswire.com/news-releases/rain-expands-support-to-solana-tron-and-stellar-enabling-more-partners-to-launch-stablecoin-powered-card-programs-302467576.html"
+    ]
+  },
+  {
+    "id": "bridge",
+    "name": "Bridge",
+    "website": "https://www.bridge.xyz/product/cards",
+    "roles": ["orchestration", "program_manager"],
+    "networks": ["visa"],
+    "card_types": ["debit", "prepaid"],
+    "regions_supported": [
+      {"code": "US", "notes": "Full support"},
+      {"code": "GB", "notes": "Full support"},
+      {"code": "AR", "notes": "Supported"},
+      {"code": "CO", "notes": "Supported"},
+      {"code": "EC", "notes": "Supported"},
+      {"code": "MX", "notes": "Supported"},
+      {"code": "PE", "notes": "Supported"},
+      {"code": "CL", "notes": "Supported"}
+    ],
+    "customer_type": ["b2b", "b2c"],
+    "custody_model": "non_custodial",
+    "funding_sources": ["stablecoin"],
+    "stablecoins": ["USDC"],
+    "chains": ["Ethereum", "Base"],
+    "kyc_kyb": "required",
+    "pricing_model": ["transaction_fee"],
+    "api_maturity": 5,
+    "docs_quality": 5,
+    "confidence": "high",
+    "notes": "Stablecoin orchestration and payments API (acquired by Stripe) that lets developers issue stablecoin-backed Visa cards via a unified API integration. Issue cards globally through a single API with Bridge and Stripe's program management expertise across 275 million cards issued. Launch in as little as four weeks. Users can spend directly from existing stablecoin balances in non-custodial wallets via smart contracts. Avoid typical cross-border and FX mark up fees. Supports virtual cards and push provisioning into Apple Pay and Google Pay. Can use Bridge wallets or bring your own wallets. Supports custom stablecoin issuance with Open Issuance platform. Supports USDC and other GENIUS-ready stablecoins.",
+    "sources": [
+      "https://www.bridge.xyz/product/cards",
+      "https://corporate.visa.com/en/sites/visa-perspectives/newsroom/visa-bridge-stablecoins-partnership.html",
+      "https://stripe.com/in/newsroom/news/bridge-partners-with-visa"
+    ]
+  },
+  {
+    "id": "stripe-issuing",
+    "name": "Stripe Issuing",
+    "website": "https://stripe.com/issuing",
+    "roles": ["processor", "bin_sponsor", "orchestration"],
+    "networks": ["visa", "mastercard"],
+    "card_types": ["debit", "prepaid", "credit"],
+    "regions_supported": [
+      {"code": "US", "notes": "Full support"},
+      {"code": "GB", "notes": "Full support"},
+      {"code": "IE", "notes": "Full support"},
+      {"code": "FR", "notes": "Full support"},
+      {"code": "DE", "notes": "Full support"},
+      {"code": "AU", "notes": "Full support"}
+    ],
+    "customer_type": ["b2b", "b2c"],
+    "custody_model": "custodial",
+    "funding_sources": ["fiat_ach", "wire", "stablecoin"],
+    "stablecoins": ["USDC"],
+    "chains": ["Ethereum", "Base"],
+    "kyc_kyb": "required",
+    "pricing_model": ["transaction_fee", "card_issuance_fee"],
+    "api_maturity": 5,
+    "docs_quality": 5,
+    "confidence": "high",
+    "notes": "Stripe's Connect + Issuing supports creating virtual and physical prepaid cards backed by stablecoin funds. Useful for platforms that want to issue stablecoin-backed cards through their ecosystem. Acquired Bridge in February 2025, enhancing stablecoin orchestration capabilities. Through Bridge integration, enables stablecoin-backed Visa cards via unified API.",
+    "sources": [
+      "https://stripe.com/docs/issuing",
+      "https://stripe.com/pricing",
+      "https://stripe.com/in/newsroom/news/bridge-partners-with-visa"
+    ]
+  },
+  {
+    "id": "baanx",
+    "name": "Baanx",
+    "website": "https://baanx.com",
+    "roles": ["program_manager", "bin_sponsor"],
+    "networks": ["visa", "mastercard"],
+    "card_types": ["debit", "prepaid"],
+    "regions_supported": [
+      {"code": "GB", "notes": "Full support"},
+      {"code": "EE", "notes": "Full support"},
+      {"code": "US", "notes": "Limited support"}
+    ],
+    "customer_type": ["b2b", "b2c"],
+    "custody_model": "hybrid",
+    "funding_sources": ["stablecoin", "fiat_ach"],
+    "stablecoins": ["USDC", "USDT"],
+    "chains": ["Ethereum", "Polygon"],
+    "kyc_kyb": "required",
+    "pricing_model": ["transaction_fee", "setup_fee"],
+    "api_maturity": 3,
+    "docs_quality": 3,
+    "confidence": "medium",
+    "notes": "Visa-issued cards enabling holders to spend USDC directly from crypto wallets, with on-the-fly conversion to fiat for merchant payments. Partnered with Visa for USDC stablecoin cards. Issuer/program manager partner model.",
+    "sources": [
+      "https://baanx.com",
+      "https://baanx.com/api-docs"
+    ]
+  },
+  {
+    "id": "marqeta",
+    "name": "Marqeta",
+    "website": "https://www.marqeta.com",
+    "roles": ["processor", "bin_sponsor"],
+    "networks": ["visa", "mastercard"],
+    "card_types": ["debit", "prepaid", "credit"],
+    "regions_supported": [
+      {"code": "US", "notes": "Full support"},
+      {"code": "GB", "notes": "Full support"},
+      {"code": "CA", "notes": "Full support"},
+      {"code": "AU", "notes": "Full support"}
+    ],
+    "customer_type": ["b2b", "b2c"],
+    "custody_model": "custodial",
+    "funding_sources": ["fiat_ach", "wire"],
+    "stablecoins": [],
+    "chains": [],
+    "kyc_kyb": "required",
+    "pricing_model": ["transaction_fee", "monthly_fee"],
+    "api_maturity": 5,
+    "docs_quality": 5,
+    "confidence": "high",
+    "notes": "Baseline issuer processor; not stablecoin-native but widely used. Requires separate stablecoin integration layer.",
+    "sources": [
+      "https://www.marqeta.com/docs",
+      "https://www.marqeta.com/pricing"
+    ]
+  },
+  {
+    "id": "galileo",
+    "name": "Galileo",
+    "website": "https://www.galileo-ft.com",
+    "roles": ["processor"],
+    "networks": ["visa", "mastercard"],
+    "card_types": ["debit", "prepaid", "credit"],
+    "regions_supported": [
+      {"code": "US", "notes": "Full support"},
+      {"code": "CA", "notes": "Full support"}
+    ],
+    "customer_type": ["b2b", "b2c"],
+    "custody_model": "custodial",
+    "funding_sources": ["fiat_ach", "wire"],
+    "stablecoins": [],
+    "chains": [],
+    "kyc_kyb": "required",
+    "pricing_model": ["transaction_fee", "monthly_fee"],
+    "api_maturity": 4,
+    "docs_quality": 4,
+    "confidence": "high",
+    "notes": "Issuer processor; not stablecoin-native but used. Requires separate stablecoin integration.",
+    "sources": [
+      "https://www.galileo-ft.com/docs",
+      "https://www.galileo-ft.com/pricing"
+    ]
+  },
+  {
+    "id": "i2c",
+    "name": "i2c",
+    "website": "https://www.i2cinc.com",
+    "roles": ["processor"],
+    "networks": ["visa", "mastercard"],
+    "card_types": ["debit", "prepaid", "credit"],
+    "regions_supported": [
+      {"code": "US", "notes": "Full support"},
+      {"code": "GB", "notes": "Full support"},
+      {"code": "CA", "notes": "Full support"},
+      {"code": "AU", "notes": "Full support"}
+    ],
+    "customer_type": ["b2b", "b2c"],
+    "custody_model": "custodial",
+    "funding_sources": ["fiat_ach", "wire"],
+    "stablecoins": [],
+    "chains": [],
+    "kyc_kyb": "required",
+    "pricing_model": ["transaction_fee", "setup_fee"],
+    "api_maturity": 4,
+    "docs_quality": 4,
+    "confidence": "high",
+    "notes": "Issuer processor; not stablecoin-native but used. Requires separate stablecoin integration.",
+    "sources": [
+      "https://www.i2cinc.com/docs",
+      "https://www.i2cinc.com/pricing"
+    ]
+  },
+  {
+    "id": "circle-card",
+    "name": "Circle Card",
+    "website": "https://www.circle.com",
+    "roles": ["orchestration", "program_manager"],
+    "networks": ["visa"],
+    "card_types": ["debit"],
+    "regions_supported": [
+      {"code": "US", "notes": "Full support"}
+    ],
+    "customer_type": ["b2c"],
+    "custody_model": "custodial",
+    "funding_sources": ["stablecoin"],
+    "stablecoins": ["USDC"],
+    "chains": ["Ethereum", "Solana"],
+    "kyc_kyb": "required",
+    "pricing_model": ["transaction_fee"],
+    "api_maturity": 3,
+    "docs_quality": 3,
+    "confidence": "medium",
+    "notes": "USDC-native card solution. Primarily B2C focused.",
+    "sources": [
+      "https://www.circle.com/card"
+    ]
+  },
+  {
+    "id": "crypto-com",
+    "name": "Crypto.com",
+    "website": "https://crypto.com",
+    "roles": ["orchestration", "program_manager"],
+    "networks": ["visa"],
+    "card_types": ["debit", "prepaid"],
+    "regions_supported": [
+      {"code": "US", "notes": "Full support"},
+      {"code": "GB", "notes": "Full support"},
+      {"code": "SG", "notes": "Full support"},
+      {"code": "AU", "notes": "Full support"}
+    ],
+    "customer_type": ["b2c"],
+    "custody_model": "custodial",
+    "funding_sources": ["stablecoin", "crypto"],
+    "stablecoins": ["USDC", "USDT"],
+    "chains": ["Ethereum", "Cronos"],
+    "kyc_kyb": "required",
+    "pricing_model": ["transaction_fee", "monthly_fee"],
+    "api_maturity": 3,
+    "docs_quality": 3,
+    "confidence": "medium",
+    "notes": "Consumer-focused card. B2C only.",
+    "sources": [
+      "https://crypto.com/cards"
+    ]
+  },
+  {
+    "id": "karta",
+    "name": "Karta",
+    "website": "https://karta.io",
+    "roles": ["orchestration", "program_manager"],
+    "networks": ["visa"],
+    "card_types": ["debit", "prepaid"],
+    "regions_supported": [
+      {"code": "US", "notes": "Supported"},
+      {"code": "GB", "notes": "Supported"}
+    ],
+    "customer_type": ["b2b", "b2c"],
+    "custody_model": "custodial",
+    "funding_sources": ["stablecoin"],
+    "stablecoins": ["USDC", "USDT"],
+    "chains": ["Ethereum", "Solana"],
+    "kyc_kyb": "required",
+    "pricing_model": ["transaction_fee", "monthly_fee"],
+    "api_maturity": 3,
+    "docs_quality": 3,
+    "confidence": "medium",
+    "notes": "Fintech platform to issue unlimited virtual stablecoin-backed cards, manage limits, and provide on/off-ramps. Designed for fintechs and businesses wanting easy card deployment. Partnered with Rain to offer branded cards on Solana.",
+    "sources": [
+      "https://karta.io",
+      "https://www.prnewswire.com/news-releases/rain-expands-support-to-solana-tron-and-stellar-enabling-more-partners-to-launch-stablecoin-powered-card-programs-302467576.html"
+    ]
+  },
+  {
+    "id": "debyt",
+    "name": "Debyt",
+    "website": "https://debyt.com",
+    "roles": ["orchestration", "program_manager"],
+    "networks": ["visa", "mastercard"],
+    "card_types": ["debit"],
+    "regions_supported": [
+      {"code": "US", "notes": "Supported"}
+    ],
+    "customer_type": ["b2b", "b2c"],
+    "custody_model": "custodial",
+    "funding_sources": ["stablecoin"],
+    "stablecoins": ["USDC", "USDT"],
+    "chains": ["Ethereum"],
+    "kyc_kyb": "required",
+    "pricing_model": ["transaction_fee"],
+    "api_maturity": 3,
+    "docs_quality": 3,
+    "confidence": "low",
+    "notes": "Infrastructure to launch stablecoin-powered debit card programs with USD account experiences. Markets itself as bridging traditional banking + stablecoin rails.",
+    "sources": [
+      "https://debyt.com"
+    ]
+  },
+  {
+    "id": "reap",
+    "name": "Reap",
+    "website": "https://reap.com",
+    "roles": ["orchestration", "program_manager"],
+    "networks": ["visa"],
+    "card_types": ["credit"],
+    "regions_supported": [
+      {"code": "US", "notes": "Supported"},
+      {"code": "GB", "notes": "Supported"},
+      {"code": "HK", "notes": "Supported"},
+      {"code": "SG", "notes": "Supported"}
+    ],
+    "customer_type": ["b2b"],
+    "custody_model": "custodial",
+    "funding_sources": ["stablecoin"],
+    "stablecoins": ["USDC", "USDT"],
+    "chains": ["Ethereum"],
+    "kyc_kyb": "required",
+    "pricing_model": ["transaction_fee", "monthly_fee"],
+    "api_maturity": 3,
+    "docs_quality": 3,
+    "confidence": "medium",
+    "notes": "Offers Visa credit cards backed by stablecoin collateral and card issuing tools for businesses. Focused on global corporate and user spend products.",
+    "sources": [
+      "https://reap.com"
+    ]
+  },
+  {
+    "id": "kast",
+    "name": "KAST",
+    "website": "https://kast.com",
+    "roles": ["orchestration", "program_manager"],
+    "networks": ["visa"],
+    "card_types": ["debit"],
+    "regions_supported": [
+      {"code": "US", "notes": "Supported"}
+    ],
+    "customer_type": ["b2c"],
+    "custody_model": "custodial",
+    "funding_sources": ["stablecoin"],
+    "stablecoins": ["USDC", "USDT"],
+    "chains": ["Solana"],
+    "kyc_kyb": "required",
+    "pricing_model": ["transaction_fee"],
+    "api_maturity": 3,
+    "docs_quality": 3,
+    "confidence": "medium",
+    "notes": "Stablecoin-powered financial platform that bridges USDC/USDT to traditional Visa debit cards. Built on Solana, works with Rain to offer branded cards that let users spend stablecoins natively from their wallets.",
+    "sources": [
+      "https://www.prnewswire.com/news-releases/rain-expands-support-to-solana-tron-and-stellar-enabling-more-partners-to-launch-stablecoin-powered-card-programs-302467576.html"
+    ]
+  },
+  {
+    "id": "bitget-wallet-card",
+    "name": "Bitget Wallet Card",
+    "website": "https://bitget.com",
+    "roles": ["orchestration", "program_manager"],
+    "networks": ["visa", "mastercard"],
+    "card_types": ["debit"],
+    "regions_supported": [
+      {"code": "US", "notes": "Supported"},
+      {"code": "GB", "notes": "Supported"},
+      {"code": "SG", "notes": "Supported"}
+    ],
+    "customer_type": ["b2c"],
+    "custody_model": "custodial",
+    "funding_sources": ["stablecoin", "crypto"],
+    "stablecoins": ["USDC", "USDT"],
+    "chains": ["Ethereum"],
+    "kyc_kyb": "required",
+    "pricing_model": ["transaction_fee"],
+    "api_maturity": 2,
+    "docs_quality": 2,
+    "confidence": "low",
+    "notes": "Crypto debit card that supports stablecoin use, low fees, and global acceptance.",
+    "sources": [
+      "https://bitget.com"
+    ]
+  },
+  {
+    "id": "gnosis-pay",
+    "name": "Gnosis Pay",
+    "website": "https://gnosis.io",
+    "roles": ["orchestration", "program_manager"],
+    "networks": ["visa"],
+    "card_types": ["debit"],
+    "regions_supported": [
+      {"code": "US", "notes": "Supported"},
+      {"code": "GB", "notes": "Supported"},
+      {"code": "DE", "notes": "Supported"}
+    ],
+    "customer_type": ["b2c"],
+    "custody_model": "non_custodial",
+    "funding_sources": ["stablecoin"],
+    "stablecoins": ["USDC", "USDT", "DAI"],
+    "chains": ["Ethereum"],
+    "kyc_kyb": "required",
+    "pricing_model": ["transaction_fee"],
+    "api_maturity": 3,
+    "docs_quality": 3,
+    "confidence": "medium",
+    "notes": "Self-custodial stablecoin-linked card where spending draws directly from crypto wallets. Users maintain full control over their funds without relying on third-party custodians.",
+    "sources": [
+      "https://gnosis.io"
+    ]
+  },
+  {
+    "id": "zeal",
+    "name": "Zeal",
+    "website": "https://zeal.com",
+    "roles": ["orchestration", "program_manager"],
+    "networks": ["visa"],
+    "card_types": ["debit"],
+    "regions_supported": [
+      {"code": "US", "notes": "Supported"},
+      {"code": "GB", "notes": "Supported"}
+    ],
+    "customer_type": ["b2c"],
+    "custody_model": "non_custodial",
+    "funding_sources": ["stablecoin"],
+    "stablecoins": ["USDC", "USDT"],
+    "chains": ["Ethereum"],
+    "kyc_kyb": "required",
+    "pricing_model": ["transaction_fee"],
+    "api_maturity": 3,
+    "docs_quality": 3,
+    "confidence": "medium",
+    "notes": "Self-custodial stablecoin-linked card where spending draws directly from crypto wallets. Provides users with control over their funds while enabling seamless spending of stablecoins.",
+    "sources": [
+      "https://zeal.com"
+    ]
+  }
+]
