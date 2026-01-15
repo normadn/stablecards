@@ -43,20 +43,7 @@ This project is split into two separate Vercel projects:
 
 ## Step 2: Copy Data File to API Directory
 
-Before deploying, you need to copy the `issuers.json` file so the API can access it:
-
-```bash
-# From the project root
-cp data/issuers.json api/data/issuers.json
-```
-
-Or create the directory and copy:
-```bash
-mkdir -p api/data
-cp data/issuers.json api/data/issuers.json
-```
-
-The API will try multiple paths to find this file, but having it in `api/data/` is the most reliable option.
+The `issuers.json` data file is already located at `api/data/issuers.json` and will be included in the deployment automatically.
 
 ## Step 3: Deploy the Next.js UI
 

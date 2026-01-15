@@ -15,10 +15,6 @@
 ## Deploy API (Step 1)
 
 ```bash
-# Copy data file
-cp data/issuers.json api/data/issuers.json
-
-# Deploy
 cd api
 vercel
 # Follow prompts, name it: stablecards-api

@@ -32,9 +32,9 @@ Many companies play multiple roles, and the schema supports this.
 
 ```
 stablecards/
-├── data/
-│   └── issuers.json          # JSON database of issuers
 ├── api/                      # TypeScript Express API
+│   ├── data/
+│   │   └── issuers.json      # JSON database of issuers
 │   ├── server.ts             # Main API server
 │   ├── types.ts              # TypeScript type definitions
 │   ├── compare.ts            # Comparison scoring logic
@@ -43,7 +43,8 @@ stablecards/
 ├── ui/                       # Next.js frontend
 │   ├── app/
 │   │   ├── page.tsx          # Main comparison UI
-│   │   └── layout.tsx
+│   │   ├── layout.tsx
+│   │   └── globals.css
 │   ├── package.json
 │   └── tsconfig.json
 ├── scripts/
@@ -54,7 +55,7 @@ stablecards/
 
 ## Data Model
 
-Each issuer in `data/issuers.json` contains:
+Each issuer in `api/data/issuers.json` contains:
 
 - **Basic Info**: `id`, `name`, `website`
 - **Roles**: Array of `["orchestration", "program_manager", "processor", "bin_sponsor"]`
@@ -213,7 +214,7 @@ npm run validate
 ## How to Add a Provider
 
 1. **Research the provider** - Gather information from their website, docs, and public sources
-2. **Add entry to `data/issuers.json`** - Follow the existing schema
+2. **Add entry to `api/data/issuers.json`** - Follow the existing schema
 3. **Validate** - Run `npm run validate` in the scripts directory
 4. **Test** - Query the API to ensure the new issuer appears correctly
 

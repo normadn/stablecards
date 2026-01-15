@@ -106,4 +106,4 @@ Before testing, validate your data:
 npm run validate
 ```
 
-This checks that `data/issuers.json` is valid and follows the schema.
+This checks that `api/data/issuers.json` is valid and follows the schema.
