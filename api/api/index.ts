@@ -103,10 +103,17 @@ app.get("/compare", (req, res) => {
     card_type: req.query.card_type as any,
   };
 
-  // Validate required country parameter
+  // If no country specified, return all issuers with default scores
   if (!query.country) {
-    return res.status(400).json({
-      error: "country parameter is required",
+    const allResults = issuers.map((issuer) => ({
+      issuer,
+      score: 50,
+      reasons: [],
+      missing: [],
+    }));
+    return res.json({
+      matches: allResults,
+      query,
     });
   }
 

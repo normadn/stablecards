@@ -60,21 +60,28 @@ interface CompareResponse {
 
 const getCardColor = (name: string) => {
   const colors: { [key: string]: string } = {
-    'Nexo': '#1a1a1a',
+    'Nexo': '#1a1f3c',
     'Coinbase': '#0052ff',
     'Binance': '#f0b90b',
-    'Crypto.com': '#103f68',
-    'Bybit': '#1a1a1a',
-    'KAST': '#8b5cf6',
-    'Gemini': '#2a2a2a',
+    'Crypto.com': '#0b1628',
+    'Bybit': '#1a1f3c',
+    'KAST': '#6366f1',
+    'Gemini': '#0f172a',
     'ConsenSys': '#f97316',
+    'Rain': '#1e293b',
+    'Bridge': '#3b82f6',
+    'Stripe Issuing': '#635bff',
+    'Baanx': '#1e1b4b',
+    'Marqeta': '#0ea5e9',
+    'Circle Card': '#00d395',
+    'Gnosis Pay': '#0d9488',
   }
-  return colors[name] || '#131a33'
+  return colors[name] || '#1a1f3c'
 }
 
 const getTextColor = (name: string) => {
-  const lightText = ['Nexo', 'Crypto.com', 'Bybit', 'Gemini']
-  return lightText.includes(name) ? '#ffffff' : '#000000'
+  const darkTextCards = ['Binance']
+  return darkTextCards.includes(name) ? '#000000' : '#ffffff'
 }
 
 export default function Home() {
@@ -169,18 +176,13 @@ export default function Home() {
   }
 
   const fetchResults = async (dataToUse = formData) => {
-    if (!dataToUse.country) {
-      setResults([])
-      return
-    }
-
     setLoading(true)
     setError(null)
 
     const params = new URLSearchParams()
-    Object.entries(dataToUse).forEach(([key, value]) => {
+    for (const [key, value] of Object.entries(dataToUse)) {
       if (value) params.append(key, value)
-    })
+    }
 
     const url = `${API_URL}/compare?${params}`
     console.log('Fetching from:', url)
@@ -207,21 +209,19 @@ export default function Home() {
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => {
       const updated = { ...prev, [field]: value }
-      // Auto-fetch when country changes
-      if (field === 'country') {
-        if (value) {
-          // Use setTimeout to ensure state is updated
-          setTimeout(() => {
-            fetchResults(updated)
-          }, 0)
-        } else {
-          // Clear results when country is cleared
-          setResults([])
-        }
-      }
+      setTimeout(() => {
+        fetchResults(updated)
+      }, 0)
       return updated
     })
   }
+
+  // Fetch all cards on initial load
+  useEffect(() => {
+    if (!loadingMetadata && metadata) {
+      fetchResults()
+    }
+  }, [loadingMetadata, metadata])
 
   const filteredResults = results.filter(result => 
     searchQuery === '' || 
