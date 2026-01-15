@@ -58,12 +58,34 @@ interface CompareResponse {
   query: any
 }
 
+const getCardColor = (name: string) => {
+  const colors: { [key: string]: string } = {
+    'Nexo': '#1a1a1a',
+    'Coinbase': '#0052ff',
+    'Binance': '#f0b90b',
+    'Crypto.com': '#103f68',
+    'Bybit': '#1a1a1a',
+    'KAST': '#8b5cf6',
+    'Gemini': '#2a2a2a',
+    'ConsenSys': '#f97316',
+  }
+  return colors[name] || '#131a33'
+}
+
+const getTextColor = (name: string) => {
+  const lightText = ['Nexo', 'Crypto.com', 'Bybit', 'Gemini']
+  return lightText.includes(name) ? '#ffffff' : '#000000'
+}
+
 export default function Home() {
   const [metadata, setMetadata] = useState<Metadata | null>(null)
   const [results, setResults] = useState<ComparisonResult[]>([])
   const [loading, setLoading] = useState(false)
   const [loadingMetadata, setLoadingMetadata] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [searchQuery, setSearchQuery] = useState('')
+  const [activeNav, setActiveNav] = useState('discover')
+  const [showRegionDropdown, setShowRegionDropdown] = useState(false)
 
   const [formData, setFormData] = useState({
     country: '',
@@ -79,12 +101,10 @@ export default function Home() {
   useEffect(() => {
     setLoadingMetadata(true)
     
-    // Create a timeout promise
     const timeoutPromise = new Promise<never>((_, reject) => {
       setTimeout(() => reject(new Error('Request timeout after 5 seconds')), 5000)
     })
     
-    // Race between fetch and timeout
     Promise.race([
       fetch(`${API_URL}/metadata`),
       timeoutPromise
@@ -148,421 +168,712 @@ export default function Home() {
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
+    // Auto-submit when filters change
+    if (field === 'country' && value) {
+      setTimeout(() => {
+        const form = document.querySelector('form') as HTMLFormElement
+        if (form) form.requestSubmit()
+      }, 100)
+    }
   }
 
+  const filteredResults = results.filter(result => 
+    searchQuery === '' || 
+    result.issuer.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    result.issuer.networks.some(n => n.toLowerCase().includes(searchQuery.toLowerCase()))
+  )
+
   return (
-    <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '2rem' }}>
-      <header style={{ marginBottom: '3rem' }}>
-        <h1 style={{ fontSize: '2.5rem', marginBottom: '0.5rem' }}>
-          Stablecoin Card Issuer Comparison
+    <div 
+      style={{ display: 'flex', minHeight: '100vh', width: '100%' }}
+      onClick={() => setShowRegionDropdown(false)}
+    >
+      {/* Left Sidebar */}
+      <aside style={{
+        width: '280px',
+        minHeight: '100vh',
+        background: '#0a0f24',
+        borderRight: '1px solid rgba(255, 255, 255, 0.1)',
+        padding: '2rem 1.5rem',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '2rem',
+      }}>
+        {/* Logo */}
+        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+          <div style={{
+            width: '32px',
+            height: '32px',
+            background: 'linear-gradient(135deg, #10b981 0%, #059669 100%)',
+            borderRadius: '8px',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            position: 'relative',
+          }}>
+            <div style={{
+              width: '20px',
+              height: '20px',
+              background: 'rgba(255, 255, 255, 0.2)',
+              borderRadius: '4px',
+              position: 'absolute',
+              top: '4px',
+              left: '4px',
+            }} />
+            <div style={{
+              width: '12px',
+              height: '12px',
+              background: 'rgba(255, 255, 255, 0.3)',
+              borderRadius: '2px',
+              position: 'absolute',
+              bottom: '4px',
+              right: '4px',
+            }} />
+          </div>
+          <span style={{
+            fontSize: '1.25rem',
+            fontWeight: '700',
+            color: '#ffffff',
+          }}>
+            CryptoCards
+          </span>
+        </div>
+
+        {/* Navigation */}
+        <nav style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+          <button
+            onClick={() => setActiveNav('discover')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              padding: '0.75rem 1rem',
+              background: activeNav === 'discover' ? '#1a1f3a' : 'transparent',
+              border: 'none',
+              borderRadius: '0.75rem',
+              color: '#ffffff',
+              cursor: 'pointer',
+              fontSize: '0.95rem',
+              fontWeight: '500',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              if (activeNav !== 'discover') {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (activeNav !== 'discover') {
+                e.currentTarget.style.background = 'transparent'
+              }
+            }}
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <rect x="4" y="4" width="4" height="4" rx="1" fill="currentColor" />
+              <rect x="12" y="4" width="4" height="4" rx="1" fill="currentColor" />
+              <rect x="4" y="12" width="4" height="4" rx="1" fill="currentColor" />
+              <rect x="12" y="12" width="4" height="4" rx="1" fill="currentColor" />
+            </svg>
+            Discover Cards
+          </button>
+
+          <button
+            onClick={() => setActiveNav('comparison')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              padding: '0.75rem 1rem',
+              background: activeNav === 'comparison' ? '#1a1f3a' : 'transparent',
+              border: 'none',
+              borderRadius: '0.75rem',
+              color: '#ffffff',
+              cursor: 'pointer',
+              fontSize: '0.95rem',
+              fontWeight: '500',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              if (activeNav !== 'comparison') {
+                e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'
+              }
+            }}
+            onMouseLeave={(e) => {
+              if (activeNav !== 'comparison') {
+                e.currentTarget.style.background = 'transparent'
+              }
+            }}
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <rect x="2" y="6" width="8" height="8" rx="1" fill="currentColor" opacity="0.5" />
+              <rect x="10" y="2" width="8" height="8" rx="1" fill="currentColor" />
+            </svg>
+            Comparison
+          </button>
+
+          <button
+            onClick={() => setActiveNav('find')}
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0.75rem',
+              padding: '0.75rem 1rem',
+              background: 'transparent',
+              border: 'none',
+              borderRadius: '0.75rem',
+              color: '#10b981',
+              cursor: 'pointer',
+              fontSize: '0.95rem',
+              fontWeight: '500',
+              transition: 'all 0.2s ease',
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(16, 185, 129, 0.1)'
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'transparent'
+            }}
+          >
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M10 2L12 8H18L13 12L15 18L10 14L5 18L7 12L2 8H8L10 2Z" fill="currentColor" />
+            </svg>
+            Find My Card
+          </button>
+        </nav>
+      </aside>
+
+      {/* Main Content */}
+      <main style={{
+        flex: 1,
+        padding: '2rem 3rem',
+        overflowY: 'auto',
+      }}>
+        {/* Title */}
+        <h1 style={{
+          fontSize: '2.5rem',
+          fontWeight: '700',
+          color: '#ffffff',
+          marginBottom: '2rem',
+        }}>
+          Explore Cards
         </h1>
-        <p style={{ color: '#666', fontSize: '1.1rem' }}>
-          Compare stablecoin credit card issuers by region, fees, KYC requirements, and more
-        </p>
-      </header>
 
-      <form onSubmit={handleSubmit} style={{ marginBottom: '3rem' }}>
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
-            gap: '1rem',
-            marginBottom: '1.5rem',
-          }}
-        >
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>
-              Country (required) *
-            </label>
-            <select
-              required
-              value={formData.country}
-              onChange={(e) => handleChange('country', e.target.value)}
-              disabled={loadingMetadata || !metadata}
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                fontSize: '1rem',
-                opacity: loadingMetadata || !metadata ? 0.6 : 1,
-                cursor: loadingMetadata || !metadata ? 'not-allowed' : 'pointer',
-              }}
-            >
-              <option value="">
-                {loadingMetadata ? 'Loading...' : !metadata ? 'No data available' : 'Select country'}
-              </option>
-              {metadata?.supported_countries?.map((code) => (
-                <option key={code} value={code}>
-                  {code}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>
-              Network
-            </label>
-            <select
-              value={formData.network}
-              onChange={(e) => handleChange('network', e.target.value)}
-              disabled={loadingMetadata || !metadata}
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                fontSize: '1rem',
-                opacity: loadingMetadata || !metadata ? 0.6 : 1,
-                cursor: loadingMetadata || !metadata ? 'not-allowed' : 'pointer',
-              }}
-            >
-              <option value="">Any</option>
-              {metadata?.networks?.map((n) => (
-                <option key={n} value={n}>
-                  {n.charAt(0).toUpperCase() + n.slice(1)}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>
-              Customer Type
-            </label>
-            <select
-              value={formData.customer_type}
-              onChange={(e) => handleChange('customer_type', e.target.value)}
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                fontSize: '1rem',
-              }}
-            >
-              <option value="">Any</option>
-              {metadata?.customer_types.map((ct) => (
-                <option key={ct} value={ct}>
-                  {ct.toUpperCase()}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>
-              Custody Model
-            </label>
-            <select
-              value={formData.custody_model}
-              onChange={(e) => handleChange('custody_model', e.target.value)}
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                fontSize: '1rem',
-              }}
-            >
-              <option value="">Any</option>
-              {metadata?.custody_models.map((cm) => (
-                <option key={cm} value={cm}>
-                  {cm.replace('_', ' ')}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>
-              Stablecoin
-            </label>
-            <select
-              value={formData.stablecoin}
-              onChange={(e) => handleChange('stablecoin', e.target.value)}
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                fontSize: '1rem',
-              }}
-            >
-              <option value="">Any</option>
-              {metadata?.stablecoins.map((s) => (
-                <option key={s} value={s}>
-                  {s}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>
-              Chain
-            </label>
-            <select
-              value={formData.chain}
-              onChange={(e) => handleChange('chain', e.target.value)}
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                fontSize: '1rem',
-              }}
-            >
-              <option value="">Any</option>
-              {metadata?.chains.map((c) => (
-                <option key={c} value={c}>
-                  {c}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>
-              KYC Requirement
-            </label>
-            <select
-              value={formData.kyc}
-              onChange={(e) => handleChange('kyc', e.target.value)}
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                fontSize: '1rem',
-              }}
-            >
-              <option value="">Any</option>
-              <option value="required">Required</option>
-              <option value="optional">Optional</option>
-            </select>
-          </div>
-
-          <div>
-            <label style={{ display: 'block', marginBottom: '0.5rem', fontWeight: '500' }}>
-              Card Type
-            </label>
-            <select
-              value={formData.card_type}
-              onChange={(e) => handleChange('card_type', e.target.value)}
-              style={{
-                width: '100%',
-                padding: '0.75rem',
-                border: '1px solid #ddd',
-                borderRadius: '4px',
-                fontSize: '1rem',
-              }}
-            >
-              <option value="">Any</option>
-              {metadata?.card_types.map((ct) => (
-                <option key={ct} value={ct}>
-                  {ct.charAt(0).toUpperCase() + ct.slice(1)}
-                </option>
-              ))}
-            </select>
-          </div>
+        {/* Search Bar */}
+        <div style={{
+          position: 'relative',
+          marginBottom: '1.5rem',
+        }}>
+          <svg
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+            style={{
+              position: 'absolute',
+              left: '1rem',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              color: '#9ca3af',
+            }}
+          >
+            <path d="M9 3C5.686 3 3 5.686 3 9C3 12.314 5.686 15 9 15C10.657 15 12.156 14.328 13.242 13.242L16.293 16.293C16.683 16.683 17.317 16.683 17.707 16.293C18.098 15.902 18.098 15.269 17.707 14.879L14.656 11.828C15.328 10.742 16 9.243 16 7.586C16 4.272 13.314 1.586 10 1.586H9V3ZM9 5C12.314 5 15 7.686 15 11C15 14.314 12.314 17 9 17C5.686 17 3 14.314 3 11C3 7.686 5.686 5 9 5Z" fill="currentColor" />
+          </svg>
+          <input
+            type="text"
+            placeholder="Search by issuer, perk, or network..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            style={{
+              width: '100%',
+              padding: '0.875rem 1rem 0.875rem 3rem',
+              background: '#131a33',
+              border: '1px solid rgba(255, 255, 255, 0.1)',
+              borderRadius: '0.75rem',
+              fontSize: '1rem',
+              color: '#ffffff',
+              outline: 'none',
+              transition: 'all 0.2s ease',
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.2)'
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = 'rgba(255, 255, 255, 0.1)'
+            }}
+          />
         </div>
 
-        <button
-          type="submit"
-          disabled={loading || loadingMetadata || !metadata}
-          style={{
-            padding: '0.75rem 2rem',
-            fontSize: '1rem',
-            backgroundColor: '#0070f3',
-            color: 'white',
-            border: 'none',
-            borderRadius: '4px',
-            cursor: loading || loadingMetadata || !metadata ? 'not-allowed' : 'pointer',
-            opacity: loading || loadingMetadata || !metadata ? 0.6 : 1,
-          }}
-        >
-          {loading ? 'Comparing...' : loadingMetadata ? 'Loading...' : !metadata ? 'Waiting for API...' : 'Compare Issuers'}
-        </button>
-      </form>
-
-      {loadingMetadata && (
-        <div
-          style={{
-            padding: '1rem',
-            backgroundColor: '#e3f2fd',
-            border: '1px solid #90caf9',
-            borderRadius: '4px',
-            color: '#1565c0',
-            marginBottom: '2rem',
-          }}
-        >
-          Loading metadata from API...
-        </div>
-      )}
-
-      {error && (
-        <div
-          style={{
-            padding: '1rem',
-            backgroundColor: '#fee',
-            border: '1px solid #fcc',
-            borderRadius: '4px',
-            color: '#c00',
-            marginBottom: '2rem',
-          }}
-        >
-          <strong>Error:</strong> {error}
-          <div style={{ marginTop: '0.5rem', fontSize: '0.9rem' }}>
-            To fix this:
-            <ol style={{ marginTop: '0.5rem', paddingLeft: '1.5rem' }}>
-              <li>Make sure the API server is running: <code>npm run dev:api</code></li>
-              <li>Check that the API is accessible at: <code>{API_URL}</code></li>
-              <li>Try opening <a href={`${API_URL}/health`} target="_blank" rel="noopener noreferrer" style={{ color: '#0070f3' }}>{API_URL}/health</a> in your browser</li>
-            </ol>
-          </div>
-        </div>
-      )}
-
-      {!loadingMetadata && !metadata && !error && (
-        <div
-          style={{
-            padding: '1rem',
-            backgroundColor: '#fff3cd',
-            border: '1px solid #ffc107',
-            borderRadius: '4px',
-            color: '#856404',
-            marginBottom: '2rem',
-          }}
-        >
-          No metadata loaded. Please check the API connection.
-        </div>
-      )}
-
-      {results.length > 0 && (
-        <div>
-          <h2 style={{ marginBottom: '1.5rem' }}>Comparison Results</h2>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '1.5rem' }}>
-            {results.map((result) => (
-              <div
-                key={result.issuer.id}
-                style={{
-                  border: '1px solid #ddd',
-                  borderRadius: '8px',
-                  padding: '1.5rem',
-                  backgroundColor: '#fafafa',
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'start', marginBottom: '1rem' }}>
-                  <div>
-                    <h3 style={{ margin: 0, fontSize: '1.5rem', marginBottom: '0.5rem' }}>
-                      <a
-                        href={result.issuer.website}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ color: '#0070f3', textDecoration: 'none' }}
-                      >
-                        {result.issuer.name}
-                      </a>
-                    </h3>
-                    <div style={{ color: '#666', fontSize: '0.9rem', marginBottom: '0.5rem' }}>
-                      Score: <strong>{result.score}/100</strong>
-                    </div>
-                    <div style={{ fontSize: '0.85rem', color: '#888' }}>
-                      Roles: {result.issuer.roles.join(', ')} | Networks:{' '}
-                      {result.issuer.networks.join(', ')} | Custody:{' '}
-                      {result.issuer.custody_model}
-                    </div>
-                  </div>
-                  <div
+        {/* Filters */}
+        <div style={{
+          display: 'flex',
+          gap: '0.75rem',
+          marginBottom: '2rem',
+          flexWrap: 'wrap',
+          alignItems: 'center',
+        }}>
+            <div style={{ position: 'relative' }} onClick={(e) => e.stopPropagation()}>
+              <button
+                onClick={() => setShowRegionDropdown(!showRegionDropdown)}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: '0.5rem',
+                padding: '0.625rem 1rem',
+                background: formData.country ? '#1a1f3a' : '#131a33',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '0.75rem',
+                color: '#ffffff',
+                cursor: 'pointer',
+                fontSize: '0.9rem',
+                transition: 'all 0.2s ease',
+              }}
+            >
+              <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="8" r="3" stroke="currentColor" strokeWidth="1.5" />
+                <path d="M8 1V3M8 13V15M15 8H13M3 8H1M13.071 2.929L11.657 4.343M4.343 11.657L2.929 13.071M13.071 13.071L11.657 11.657M4.343 4.343L2.929 2.929" stroke="currentColor" strokeWidth="1.5" />
+              </svg>
+              {formData.country || 'All Regions'}
+              <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+                <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+              </svg>
+            </button>
+            {showRegionDropdown && (
+              <div style={{
+                position: 'absolute',
+                top: '100%',
+                left: 0,
+                marginTop: '0.5rem',
+                background: '#131a33',
+                border: '1px solid rgba(255, 255, 255, 0.1)',
+                borderRadius: '0.75rem',
+                padding: '0.5rem',
+                minWidth: '200px',
+                maxHeight: '300px',
+                overflowY: 'auto',
+                zIndex: 1000,
+                boxShadow: '0 10px 15px -3px rgba(0, 0, 0, 0.5)',
+              }}>
+                <button
+                  onClick={() => {
+                    handleChange('country', '')
+                    setShowRegionDropdown(false)
+                  }}
+                  style={{
+                    width: '100%',
+                    textAlign: 'left',
+                    padding: '0.625rem 0.75rem',
+                    background: !formData.country ? '#1a1f3a' : 'transparent',
+                    border: 'none',
+                    borderRadius: '0.5rem',
+                    color: '#ffffff',
+                    cursor: 'pointer',
+                    fontSize: '0.9rem',
+                    marginBottom: '0.25rem',
+                  }}
+                >
+                  All Regions
+                </button>
+                {metadata?.supported_countries?.map((code) => (
+                  <button
+                    key={code}
+                    onClick={() => {
+                      handleChange('country', code)
+                      setShowRegionDropdown(false)
+                    }}
                     style={{
-                      padding: '0.5rem 1rem',
-                      backgroundColor: result.score >= 70 ? '#cfc' : result.score >= 50 ? '#ffc' : '#fcc',
-                      borderRadius: '4px',
+                      width: '100%',
+                      textAlign: 'left',
+                      padding: '0.625rem 0.75rem',
+                      background: formData.country === code ? '#1a1f3a' : 'transparent',
+                      border: 'none',
+                      borderRadius: '0.5rem',
+                      color: '#ffffff',
+                      cursor: 'pointer',
                       fontSize: '0.9rem',
-                      fontWeight: 'bold',
+                      marginBottom: '0.25rem',
+                    }}
+                    onMouseEnter={(e) => {
+                      if (formData.country !== code) {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.05)'
+                      }
+                    }}
+                    onMouseLeave={(e) => {
+                      if (formData.country !== code) {
+                        e.currentTarget.style.background = 'transparent'
+                      }
                     }}
                   >
-                    {result.score}%
-                  </div>
-                </div>
-
-                <div style={{ marginBottom: '1rem' }}>
-                  <strong style={{ display: 'block', marginBottom: '0.5rem' }}>
-                    Why this matched:
-                  </strong>
-                  <ul style={{ margin: 0, paddingLeft: '1.5rem' }}>
-                    {result.reasons.map((reason, idx) => (
-                      <li key={idx} style={{ marginBottom: '0.25rem', fontSize: '0.9rem' }}>
-                        {reason.message} <span style={{ color: '#666' }}>(+{reason.score})</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-
-                {result.missing.length > 0 && (
-                  <div style={{ marginBottom: '1rem' }}>
-                    <strong style={{ display: 'block', marginBottom: '0.5rem', color: '#c00' }}>
-                      Missing requirements:
-                    </strong>
-                    <ul style={{ margin: 0, paddingLeft: '1.5rem' }}>
-                      {result.missing.map((miss, idx) => (
-                        <li key={idx} style={{ marginBottom: '0.25rem', fontSize: '0.9rem', color: '#c00' }}>
-                          {miss}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
-
-                <div style={{ fontSize: '0.85rem', color: '#666' }}>
-                  <div style={{ marginBottom: '0.25rem' }}>
-                    <strong>Stablecoins:</strong> {result.issuer.stablecoins.join(', ') || 'None'}
-                  </div>
-                  <div style={{ marginBottom: '0.25rem' }}>
-                    <strong>Chains:</strong> {result.issuer.chains.join(', ') || 'None'}
-                  </div>
-                  <div style={{ marginBottom: '0.25rem' }}>
-                    <strong>Card Types:</strong> {result.issuer.card_types.join(', ')}
-                  </div>
-                  <div style={{ marginBottom: '0.25rem' }}>
-                    <strong>Customer Types:</strong> {result.issuer.customer_type.join(', ')}
-                  </div>
-                  {result.issuer.notes && (
-                    <div style={{ marginTop: '0.5rem', fontStyle: 'italic' }}>
-                      {result.issuer.notes}
-                    </div>
-                  )}
-                  <div style={{ marginTop: '0.5rem' }}>
-                    <strong>Confidence:</strong> {result.issuer.confidence} |{' '}
-                    <strong>API Maturity:</strong> {result.issuer.api_maturity}/5 |{' '}
-                    <strong>Docs Quality:</strong> {result.issuer.docs_quality}/5
-                  </div>
-                  {result.issuer.sources.length > 0 && (
-                    <div style={{ marginTop: '0.5rem' }}>
-                      <strong>Sources:</strong>{' '}
-                      {result.issuer.sources.map((src, idx) => (
-                        <span key={idx}>
-                          <a
-                            href={src}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{ color: '#0070f3' }}
-                          >
-                            {idx + 1}
-                          </a>
-                          {idx < result.issuer.sources.length - 1 ? ', ' : ''}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
+                    {code}
+                  </button>
+                ))}
               </div>
-            ))}
+            )}
           </div>
+
+          <button style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '0.625rem 1rem',
+            background: '#131a33',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '0.75rem',
+            color: '#ffffff',
+            cursor: 'pointer',
+            fontSize: '0.9rem',
+            transition: 'all 0.2s ease',
+          }}>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 1V15M1 8H15" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+              <circle cx="8" cy="8" r="2" stroke="currentColor" strokeWidth="1.5" />
+            </svg>
+            Any Currency
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+
+          <button style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '0.625rem 1rem',
+            background: '#131a33',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '0.75rem',
+            color: '#ffffff',
+            cursor: 'pointer',
+            fontSize: '0.9rem',
+            transition: 'all 0.2s ease',
+          }}>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <rect x="3" y="7" width="10" height="6" rx="1" stroke="currentColor" strokeWidth="1.5" />
+              <path d="M5 7V5C5 3.343 6.343 2 8 2C9.657 2 11 3.343 11 5V7" stroke="currentColor" strokeWidth="1.5" />
+            </svg>
+            Any Privacy
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
+
+          <button style={{
+            padding: '0.625rem 1rem',
+            background: formData.custody_model === 'non-custodial' ? '#1a1f3a' : '#131a33',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '0.75rem',
+            color: '#ffffff',
+            cursor: 'pointer',
+            fontSize: '0.9rem',
+            transition: 'all 0.2s ease',
+          }}
+          onClick={() => {
+            handleChange('custody_model', formData.custody_model === 'non-custodial' ? '' : 'non-custodial')
+          }}
+          >
+            Non-Custodial
+          </button>
+
+          <button style={{
+            padding: '0.625rem 1rem',
+            background: formData.custody_model === 'self-custody' ? '#1a1f3a' : '#131a33',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '0.75rem',
+            color: '#ffffff',
+            cursor: 'pointer',
+            fontSize: '0.9rem',
+            transition: 'all 0.2s ease',
+          }}
+          onClick={() => {
+            handleChange('custody_model', formData.custody_model === 'self-custody' ? '' : 'self-custody')
+          }}
+          >
+            Self-Custody
+          </button>
+
+          <div style={{ flex: 1 }} />
+
+          <button style={{
+            display: 'flex',
+            alignItems: 'center',
+            gap: '0.5rem',
+            padding: '0.625rem 1rem',
+            background: '#131a33',
+            border: '1px solid rgba(255, 255, 255, 0.1)',
+            borderRadius: '0.75rem',
+            color: '#ffffff',
+            cursor: 'pointer',
+            fontSize: '0.9rem',
+            transition: 'all 0.2s ease',
+          }}>
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+              <path d="M8 2L10.09 6.26L14.91 7.09L11.45 10.18L12.18 15L8 12.77L3.82 15L4.55 10.18L1.09 7.09L5.91 6.26L8 2Z" fill="currentColor" />
+            </svg>
+            All
+            <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+              <path d="M3 4.5L6 7.5L9 4.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+            </svg>
+          </button>
         </div>
-      )}
+
+        {/* Hidden Filter Form */}
+        <form onSubmit={handleSubmit} style={{ display: 'none' }}>
+          {[
+            { key: 'country', label: 'Country', required: true },
+            { key: 'network', label: 'Network', required: false },
+            { key: 'customer_type', label: 'Customer Type', required: false },
+            { key: 'custody_model', label: 'Custody Model', required: false },
+            { key: 'stablecoin', label: 'Stablecoin', required: false },
+            { key: 'chain', label: 'Chain', required: false },
+            { key: 'kyc', label: 'KYC Requirement', required: false },
+            { key: 'card_type', label: 'Card Type', required: false },
+          ].map(({ key, label, required }) => (
+            key === 'country' ? (
+              <select
+                key={key}
+                required={required}
+                value={formData[key as keyof typeof formData]}
+                onChange={(e) => handleChange(key, e.target.value)}
+                disabled={loadingMetadata || !metadata}
+                style={{ display: 'block', marginBottom: '1rem' }}
+              >
+                <option value="">Select country</option>
+                {metadata?.supported_countries?.map((code) => (
+                  <option key={code} value={code}>{code}</option>
+                ))}
+              </select>
+            ) : null
+          ))}
+        </form>
+
+        {/* Error Messages */}
+        {error && (
+          <div style={{
+            padding: '1rem',
+            background: 'rgba(239, 68, 68, 0.1)',
+            border: '1px solid rgba(239, 68, 68, 0.3)',
+            borderRadius: '0.75rem',
+            color: '#fca5a5',
+            marginBottom: '2rem',
+          }}>
+            {error}
+          </div>
+        )}
+
+        {/* Cards Grid */}
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '4rem', color: '#9ca3af' }}>
+            Loading...
+          </div>
+        ) : filteredResults.length > 0 ? (
+          <div style={{
+            display: 'grid',
+            gridTemplateColumns: 'repeat(auto-fill, minmax(300px, 1fr))',
+            gap: '1.5rem',
+          }}>
+            {filteredResults.map((result) => {
+              const cardColor = getCardColor(result.issuer.name)
+              const textColor = getTextColor(result.issuer.name)
+              const cardNumber = String(Math.floor(Math.random() * 9000) + 1000)
+              const hasVisa = result.issuer.networks.some(n => n.toLowerCase().includes('visa'))
+              const hasMastercard = result.issuer.networks.some(n => n.toLowerCase().includes('mastercard'))
+
+              return (
+                <div
+                  key={result.issuer.id}
+                  style={{
+                    aspectRatio: '1.586 / 1',
+                    background: cardColor,
+                    borderRadius: '1rem',
+                    padding: '1.5rem',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    justifyContent: 'space-between',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease',
+                    boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.3)',
+                    position: 'relative',
+                    overflow: 'hidden',
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)'
+                    e.currentTarget.style.boxShadow = '0 10px 15px -3px rgba(0, 0, 0, 0.4)'
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)'
+                    e.currentTarget.style.boxShadow = '0 4px 6px -1px rgba(0, 0, 0, 0.3)'
+                  }}
+                  onClick={() => window.open(result.issuer.website, '_blank')}
+                >
+                  {/* Top Row */}
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'start',
+                  }}>
+                    <div>
+                      <div style={{
+                        fontSize: '1.25rem',
+                        fontWeight: '700',
+                        color: textColor,
+                        marginBottom: '0.25rem',
+                      }}>
+                        {result.issuer.name}
+                      </div>
+                      <div style={{
+                        fontSize: '0.75rem',
+                        color: textColor,
+                        opacity: 0.7,
+                      }}>
+                        {result.issuer.custody_model}
+                      </div>
+                    </div>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation()
+                        // Add to comparison logic
+                      }}
+                      style={{
+                        width: '32px',
+                        height: '32px',
+                        borderRadius: '50%',
+                        background: 'rgba(255, 255, 255, 0.2)',
+                        border: 'none',
+                        color: textColor,
+                        cursor: 'pointer',
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        fontSize: '1.25rem',
+                        transition: 'all 0.2s ease',
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.3)'
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.2)'
+                      }}
+                    >
+                      +
+                    </button>
+                  </div>
+
+                  {/* Middle - Chip */}
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    marginTop: 'auto',
+                    marginBottom: 'auto',
+                  }}>
+                    <div style={{
+                      width: '48px',
+                      height: '36px',
+                      background: 'linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%)',
+                      borderRadius: '4px',
+                      position: 'relative',
+                      overflow: 'hidden',
+                    }}>
+                      <div style={{
+                        position: 'absolute',
+                        top: '4px',
+                        left: '4px',
+                        right: '4px',
+                        bottom: '4px',
+                        background: 'linear-gradient(135deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0.1) 100%)',
+                        borderRadius: '2px',
+                      }} />
+                    </div>
+                  </div>
+
+                  {/* Bottom Row */}
+                  <div style={{
+                    display: 'flex',
+                    justifyContent: 'space-between',
+                    alignItems: 'flex-end',
+                  }}>
+                    <div>
+                      <div style={{
+                        fontSize: '1rem',
+                        fontWeight: '600',
+                        color: textColor,
+                        letterSpacing: '0.1em',
+                        marginBottom: '0.25rem',
+                      }}>
+                        .... {cardNumber}
+                      </div>
+                      <div style={{
+                        fontSize: '0.75rem',
+                        color: textColor,
+                        opacity: 0.7,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.05em',
+                      }}>
+                        CARD HOLDER
+                      </div>
+                    </div>
+                    <div style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '0.5rem',
+                    }}>
+                      {hasVisa && (
+                        <div style={{
+                          fontSize: '1.25rem',
+                          fontWeight: '700',
+                          color: textColor,
+                          letterSpacing: '0.05em',
+                        }}>
+                          VISA
+                        </div>
+                      )}
+                      {hasMastercard && (
+                        <div style={{
+                          width: '40px',
+                          height: '24px',
+                          background: textColor === '#ffffff' ? '#eb001b' : '#000000',
+                          borderRadius: '4px',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          position: 'relative',
+                        }}>
+                          <div style={{
+                            width: '32px',
+                            height: '32px',
+                            borderRadius: '50%',
+                            background: textColor === '#ffffff' ? '#ff5f00' : '#ffffff',
+                            position: 'absolute',
+                            right: '-8px',
+                          }} />
+                          <div style={{
+                            width: '32px',
+                            height: '32px',
+                            borderRadius: '50%',
+                            background: textColor === '#ffffff' ? '#eb001b' : '#000000',
+                            position: 'absolute',
+                            left: '-8px',
+                          }} />
+                        </div>
+                      )}
+                      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" style={{ color: textColor, opacity: 0.7 }}>
+                        <path d="M12 2L13.09 8.26L19.91 9.09L14.45 13.18L15.18 18L12 15.77L8.82 18L9.55 13.18L4.09 9.09L10.91 8.26L12 2Z" fill="currentColor" />
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        ) : results.length === 0 && !loadingMetadata ? (
+          <div style={{
+            textAlign: 'center',
+            padding: '4rem',
+            color: '#9ca3af',
+          }}>
+            <p style={{ fontSize: '1.125rem', marginBottom: '0.5rem' }}>No cards found</p>
+            <p style={{ fontSize: '0.9rem', opacity: 0.7 }}>Select a country to start exploring cards</p>
+          </div>
+        ) : null}
+      </main>
     </div>
   )
 }
